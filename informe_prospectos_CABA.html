@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe de Prospectos — Diseño Web CABA</title>
+  <style>
+    :root {
+      --verde: #22c55e;
+      --verde-dark: #16a34a;
+      --amarillo: #f59e0b;
+      --rojo: #ef4444;
+      --azul: #3b82f6;
+      --gris-oscuro: #1e293b;
+      --gris-medio: #334155;
+      --gris-claro: #f1f5f9;
+      --blanco: #ffffff;
+      --borde: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gris-claro);
+      color: var(--gris-oscuro);
+      font-size: 14px;
+    }
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 40px 32px 32px;
+    }
+    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    .header p { color: #94a3b8; font-size: 15px; }
+    .header-meta {
+      display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap;
+    }
+    .meta-badge {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px 16px;
+    }
+    .meta-badge .num { font-size: 24px; font-weight: 700; color: var(--verde); }
+    .meta-badge .lbl { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
+
+    .section-title {
+      font-size: 18px; font-weight: 700;
+      color: var(--gris-oscuro);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--verde);
+      display: inline-block;
+    }
+
+    /* TABLA */
+    .tabla-wrapper { overflow-x: auto; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 40px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    thead tr { background: var(--gris-oscuro); color: white; }
+    th { padding: 12px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .score-bar {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .bar-bg {
+      flex: 1; height: 6px; background: #e2e8f0; border-radius: 3px; min-width: 60px;
+    }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .score-num { font-weight: 700; font-size: 15px; min-width: 28px; }
+
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-rojo { background: #fee2e2; color: #dc2626; }
+    .badge-naranja { background: #fef3c7; color: #d97706; }
+    .badge-verde { background: #dcfce7; color: #16a34a; }
+    .badge-azul { background: #dbeafe; color: #1d4ed8; }
+    .badge-morado { background: #ede9fe; color: #7c3aed; }
+    .badge-rosa { background: #fce7f3; color: #be185d; }
+    .badge-gris { background: #f1f5f9; color: #475569; }
+
+    .oport-alta { color: #dc2626; font-weight: 700; }
+    .oport-media { color: #d97706; font-weight: 600; }
+    .oport-baja { color: #16a34a; font-weight: 600; }
+
+    .web-tag { font-size: 12px; color: #64748b; }
+    .sin-web { color: #dc2626; font-weight: 600; font-size: 12px; }
+    .solo-ig { color: #be185d; font-weight: 600; font-size: 12px; }
+    .web-basica { color: #d97706; font-weight: 600; font-size: 12px; }
+
+    /* CARDS DETALLE */
+    .cards-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px; margin-bottom: 40px;
+    }
+    .card {
+      background: white; border-radius: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      overflow: hidden;
+      border-top: 4px solid var(--verde);
+    }
+    .card.urgente { border-top-color: var(--rojo); }
+    .card.media { border-top-color: var(--amarillo); }
+
+    .card-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--borde);
+    }
+    .card-header .negocio { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-header .sector { font-size: 12px; color: #64748b; }
+    .card-header .score-big {
+      float: right; font-size: 26px; font-weight: 800;
+      line-height: 1;
+    }
+    .card-body { padding: 16px 20px; }
+    .info-row {
+      display: flex; gap: 6px; align-items: flex-start;
+      margin-bottom: 8px; font-size: 13px; color: #475569;
+    }
+    .info-row .icon { min-width: 16px; }
+    .info-row strong { color: var(--gris-oscuro); }
+
+    .problemas {
+      margin-top: 12px; padding: 12px; background: #fff7ed;
+      border-radius: 8px; border-left: 3px solid var(--amarillo);
+    }
+    .problemas h4 { font-size: 12px; color: #92400e; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .problemas ul { margin-left: 14px; }
+    .problemas li { font-size: 12px; color: #78350f; margin-bottom: 3px; }
+
+    .mensaje {
+      margin-top: 12px; padding: 12px; background: #f0fdf4;
+      border-radius: 8px; border-left: 3px solid var(--verde);
+    }
+    .mensaje h4 { font-size: 12px; color: #14532d; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .mensaje p { font-size: 12px; color: #166534; line-height: 1.5; }
+
+    .card-footer {
+      padding: 12px 20px;
+      background: #f8fafc;
+      border-top: 1px solid var(--borde);
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: none; text-decoration: none; display: inline-block;
+    }
+    .btn-primary { background: var(--verde); color: white; }
+    .btn-secondary { background: white; color: var(--gris-oscuro); border: 1px solid var(--borde); }
+
+    /* JSON EXPORT */
+    .json-box {
+      background: #0f172a; color: #e2e8f0; border-radius: 12px;
+      padding: 20px 24px; overflow-x: auto; font-family: 'Courier New', monospace;
+      font-size: 12px; line-height: 1.6; margin-bottom: 40px;
+      position: relative;
+    }
+    .json-box .copy-btn {
+      position: absolute; top: 12px; right: 16px;
+      background: #334155; color: #94a3b8; border: none;
+      border-radius: 6px; padding: 4px 10px; font-size: 11px;
+      cursor: pointer;
+    }
+    .json-key { color: #7dd3fc; }
+    .json-str { color: #86efac; }
+    .json-num { color: #f9a8d4; }
+
+    .footer {
+      background: var(--gris-oscuro); color: #64748b;
+      text-align: center; padding: 20px; font-size: 12px;
+    }
+    .footer strong { color: #94a3b8; }
+
+    @media (max-width: 640px) {
+      .header { padding: 24px 16px 20px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Informe de Prospectos — Diseño Web</h1>
+  <p>CABA · Todos los sectores · Generado el 18 de mayo de 2026</p>
+  <div class="header-meta">
+    <div class="meta-badge">
+      <div class="num">17</div>
+      <div class="lbl">Prospectos encontrados</div>
+    </div>
+    <div class="meta-badge">
+      <div class="num">9</div>
+      <div class="lbl">Sin página web</div>
+    </div>
+    <div class="meta-badge">
+      <div class="num">5</div>
+      <div class="lbl">Solo en Instagram</div>
+    </div>
+    <div class="meta-badge">
+      <div class="num">8</div>
+      <div class="lbl">Oportunidad alta</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TABLA GENERAL -->
+  <div class="section-title">Tabla de Prospectos</div>
+
+  <div class="tabla-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Negocio</th>
+          <th>Sector</th>
+          <th>Barrio</th>
+          <th>Contacto</th>
+          <th>Presencia Web</th>
+          <th>Oportunidad</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><strong>Non Solo Pilates</strong></td>
+          <td><span class="badge badge-morado">Fitness</span></td>
+          <td>Parque Patricios</td>
+          <td>@nonsolopilates</td>
+          <td><span class="solo-ig">Solo Instagram</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:93%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">9.3</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><strong>Mambo Restoran</strong></td>
+          <td><span class="badge badge-naranja">Gastronomía</span></td>
+          <td>Villa Crespo</td>
+          <td>+54 11 3068-1820</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:90%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">9.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><strong>Cucha del Pari</strong></td>
+          <td><span class="badge badge-naranja">Gastronomía</span></td>
+          <td>CABA</td>
+          <td>@cuchadelpari</td>
+          <td><span class="solo-ig">Solo Instagram</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:90%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">9.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td><strong>Barre Estudio</strong></td>
+          <td><span class="badge badge-morado">Fitness</span></td>
+          <td>CABA</td>
+          <td>@barre.estudio</td>
+          <td><span class="solo-ig">Solo Instagram</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:85%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">8.5</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td><strong>Calma Chica</strong></td>
+          <td><span class="badge badge-naranja">Gastronomía</span></td>
+          <td>Almagro</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:83%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">8.3</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>6</strong></td>
+          <td><strong>AURORA ESTILISTAS</strong></td>
+          <td><span class="badge badge-rosa">Belleza</span></td>
+          <td>Belgrano R</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">MUY ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:82%;background:#ef4444"></div></div>
+              <span class="score-num" style="color:#ef4444">8.2</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>7</strong></td>
+          <td><strong>Olla 7</strong></td>
+          <td><span class="badge badge-naranja">Gastronomía</span></td>
+          <td>Chacarita</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:80%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">8.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>8</strong></td>
+          <td><strong>Café Dadá</strong></td>
+          <td><span class="badge badge-naranja">Gastronomía</span></td>
+          <td>CABA</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:80%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">8.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>9</strong></td>
+          <td><strong>Salón La Pampa 3390</strong></td>
+          <td><span class="badge badge-rosa">Belleza</span></td>
+          <td>Belgrano</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-alta">ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:78%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.8</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>10</strong></td>
+          <td><strong>Veterinaria Goyena 114</strong></td>
+          <td><span class="badge badge-azul">Mascotas</span></td>
+          <td>Caballito</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-media">ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:75%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.5</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>11</strong></td>
+          <td><strong>Veterinaria S&amp;B</strong></td>
+          <td><span class="badge badge-azul">Mascotas</span></td>
+          <td>Palermo</td>
+          <td>(011) 2875-25xx</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-media">ALTA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:75%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.5</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>12</strong></td>
+          <td><strong>CrossFit Villa Crespo</strong></td>
+          <td><span class="badge badge-morado">Fitness</span></td>
+          <td>Villa Crespo</td>
+          <td>—</td>
+          <td><span class="web-basica">Web básica</span></td>
+          <td class="oport-media">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:72%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.2</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>13</strong></td>
+          <td><strong>RÉEL Beauty Studio</strong></td>
+          <td><span class="badge badge-rosa">Belleza</span></td>
+          <td>Belgrano</td>
+          <td>—</td>
+          <td><span class="web-basica">Web básica</span></td>
+          <td class="oport-media">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:70%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>14</strong></td>
+          <td><strong>Peluquería Lacroze 2312</strong></td>
+          <td><span class="badge badge-rosa">Belleza</span></td>
+          <td>Belgrano</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-media">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:70%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">7.0</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>15</strong></td>
+          <td><strong>Veterinaria Goyena 389</strong></td>
+          <td><span class="badge badge-azul">Mascotas</span></td>
+          <td>Caballito</td>
+          <td>—</td>
+          <td><span class="sin-web">Sin web propia</span></td>
+          <td class="oport-media">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:68%;background:#f59e0b"></div></div>
+              <span class="score-num" style="color:#f59e0b">6.8</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>16</strong></td>
+          <td><strong>Estudio Jurídico Diz</strong></td>
+          <td><span class="badge badge-gris">Legal</span></td>
+          <td>CABA</td>
+          <td>estudiojuridicodiz.com.ar</td>
+          <td><span class="web-basica">Web anticuada</span></td>
+          <td class="oport-baja">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:55%;background:#22c55e"></div></div>
+              <span class="score-num" style="color:#22c55e">5.5</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>17</strong></td>
+          <td><strong>Estudio Piacentini</strong></td>
+          <td><span class="badge badge-gris">Contaduría</span></td>
+          <td>Villa del Parque</td>
+          <td>estudiopiacentini.com.ar</td>
+          <td><span class="web-basica">Web básica</span></td>
+          <td class="oport-baja">MEDIA</td>
+          <td>
+            <div class="score-bar">
+              <div class="bar-bg"><div class="bar-fill" style="width:50%;background:#22c55e"></div></div>
+              <span class="score-num" style="color:#22c55e">5.0</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ANÁLISIS DETALLADO TOP 6 -->
+  <div class="section-title">Análisis Detallado — Top 6 Prospectos</div>
+
+  <div class="cards-grid">
+
+    <!-- CARD 1 -->
+    <div class="card urgente">
+      <div class="card-header">
+        <div class="score-big" style="color:#ef4444">9.3</div>
+        <div class="negocio">Non Solo Pilates</div>
+        <div class="sector">Fitness · Pilates Reformer · Parque Patricios</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>Parque Patricios, CABA</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">📱</span>
+          <span>Instagram: <strong>@nonsolopilates</strong></span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="sin-web">Sin sitio web — Solo Instagram</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">👥</span>
+          <span>Clases individuales, dúo y grupales en Reformer</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>No tiene web: pierde reservas que llegan buscando en Google</li>
+            <li>Sin sistema de turnos online — todo por DM de Instagram</li>
+            <li>No aparece en búsquedas como "pilates Parque Patricios"</li>
+            <li>Potenciales clientes con dudas no encuentran precios ni info</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Hola! Vi tu estudio de pilates reformer en Instagram y me parece una propuesta muy interesante para el barrio.
+            Noto que no tenés sitio web — muchas personas buscan 'pilates Parque Patricios' en Google y no te van a encontrar.
+            Te puedo armar una landing page con tus precios, fotos y un botón para reservar turnos por WhatsApp, por menos de lo que pensás. ¿Te cuento más?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-morado">Pilates</span>
+        <span class="badge badge-verde">Score 9.3</span>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="card urgente">
+      <div class="card-header">
+        <div class="score-big" style="color:#ef4444">9.0</div>
+        <div class="negocio">Mambo Restoran</div>
+        <div class="sector">Gastronomía · Cocina Argentina Contemporánea · Villa Crespo</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>Malabia 820, Villa Crespo, CABA</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">📞</span>
+          <span><strong>+54 11 3068-1820</strong></span>
+        </div>
+        <div class="info-row">
+          <span class="icon">📱</span>
+          <span>Instagram: <strong>@mambo.restoran</strong></span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="sin-web">Sin sitio web — Solo Instagram y directorios</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">⏰</span>
+          <span>Mar–Vie 19–24 hs · Sáb–Dom almuerzo y cena</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>Solo aparece en directorios de terceros, no controla su propia info</li>
+            <li>Sin carta/menú online accesible para el cliente</li>
+            <li>Sin sistema de reservas propio — depende de llamada o DM</li>
+            <li>Calificación 8.8/10 con 238 reseñas: merece su propia vitrina</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Hola! Conozco Mambo y me parece una propuesta increíble.
+            Vi que tienen muy buenas reseñas pero no tienen web propia — aparecen solo en broccolino y similares.
+            Con una landing page simple con el menú, fotos del lugar y un botón de reservas, van a captar muchos más clientes que buscan en Google.
+            ¿Hablamos esta semana?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-naranja">Gastronomía</span>
+        <span class="badge badge-verde">Score 9.0</span>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="card urgente">
+      <div class="card-header">
+        <div class="score-big" style="color:#ef4444">9.0</div>
+        <div class="negocio">Cucha del Pari</div>
+        <div class="sector">Gastronomía · Bar / Resto · CABA</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>CABA (barrio a confirmar)</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">📱</span>
+          <span>Instagram: <strong>@cuchadelpari</strong></span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="solo-ig">Solo Instagram — Sin web, sin Google Maps</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">⏰</span>
+          <span>Martes a sábado 18:30 a 1 hs</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>Totalmente invisible fuera de Instagram</li>
+            <li>No aparece en búsquedas de Google</li>
+            <li>Sin dirección ni horarios en un lugar de fácil acceso</li>
+            <li>Negocio nuevo: momento ideal para construir presencia digital</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Buenas! Vi @cuchadelpari en Instagram y me encantó la propuesta.
+            El problema es que si alguien te busca en Google no aparecés por ningún lado — solo en Instagram.
+            Con una landing rápida con tu dirección, horarios y fotos, empezás a aparecer en búsquedas locales y captás gente del barrio.
+            ¿Te interesa que te cuente más?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-naranja">Gastronomía</span>
+        <span class="badge badge-verde">Score 9.0</span>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="card urgente">
+      <div class="card-header">
+        <div class="score-big" style="color:#ef4444">8.5</div>
+        <div class="negocio">Barre Estudio</div>
+        <div class="sector">Fitness · Ballet + Fitness + Pilates · CABA</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>CABA (barrio a confirmar)</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">📱</span>
+          <span>Instagram: <strong>@barre.estudio</strong> — 3.398 seguidores</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="solo-ig">Solo Instagram — Sin web propia</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">💡</span>
+          <span>Combina ballet, fitness y pilates en una sola clase</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>3.398 seguidores en IG = hay demanda, pero sin web pierden conversiones</li>
+            <li>Sin página de precios/planes — el interesado tiene que preguntar por DM</li>
+            <li>Sin horarios de clases accesibles en Google</li>
+            <li>Propuesta diferencial (ballet+fitness+pilates) merece una landing atractiva</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Hola! Sigo @barre.estudio hace un tiempo y me parece una propuesta muy original.
+            Con más de 3.000 seguidores en Instagram ya tienen tracción, pero sin web propia muchos interesados se pierden.
+            Una landing con cronograma de clases, precios y fotos puede convertir muchos más seguidores en alumnos.
+            ¿Hablamos?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-morado">Fitness</span>
+        <span class="badge badge-verde">Score 8.5</span>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="card media">
+      <div class="card-header">
+        <div class="score-big" style="color:#f59e0b">8.3</div>
+        <div class="negocio">Calma Chica</div>
+        <div class="sector">Gastronomía · Café / Resto · Almagro</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>Tucumán y Bulnes, Almagro, CABA</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="sin-web">Sin web propia — Solo menciones en medios</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">💡</span>
+          <span>Proyecto de Federico Severino — cafetería de barrio</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>Fue nombrado en medios (Timeout, Ohlalá) pero sin presencia propia</li>
+            <li>Sin forma de ver menú, horarios o reservar desde Google</li>
+            <li>Propuesta "de barrio" encaja perfectamente con una landing local</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Hola! Vi Calma Chica mencionado en Timeout y en Ohlalá — muy buena prensa para ser tan nuevo.
+            Sin embargo no aparece ningún sitio web si uno los busca en Google.
+            Una landing sencilla con fotos, menú y horarios puede traerles muchos vecinos de Almagro.
+            ¿Les interesa que conversemos?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-naranja">Gastronomía</span>
+        <span class="badge badge-verde">Score 8.3</span>
+      </div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="card media">
+      <div class="card-header">
+        <div class="score-big" style="color:#ef4444">8.2</div>
+        <div class="negocio">AURORA ESTILISTAS</div>
+        <div class="sector">Belleza · Peluquería &amp; Estética · Belgrano R</div>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="icon">📍</span>
+          <span>Amenábar 1807, Belgrano R, CABA</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">⏰</span>
+          <span>Martes a sábado 10 a 19 hs</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">🌐</span>
+          <span class="sin-web">Sin web — Solo en directorio Belgrano</span>
+        </div>
+        <div class="info-row">
+          <span class="icon">💡</span>
+          <span>Glamour, Elegancia &amp; Stylo — peluquería premium</span>
+        </div>
+        <div class="problemas">
+          <h4>Problemas detectados</h4>
+          <ul>
+            <li>Sin presencia digital propia en un barrio de alto poder adquisitivo</li>
+            <li>Sin galería de trabajos — los salones premium necesitan mostrar resultados</li>
+            <li>Sin sistema de turnos online para clientes frecuentes</li>
+            <li>Belgrano R = zona ideal para web profesional con fotos de calidad</li>
+          </ul>
+        </div>
+        <div class="mensaje">
+          <h4>Mensaje de contacto sugerido</h4>
+          <p>
+            "Hola! Pasé por AURORA en Amenábar y me pareció un salón muy elegante.
+            Sin embargo no tienen sitio web y en Belgrano R muchos clientes buscan peluquerías en Google antes de elegir.
+            Con una landing con galería de trabajos, servicios y sistema de turnos online, van a destacar sobre la competencia.
+            ¿Puedo contarles mi propuesta esta semana?"
+          </p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="badge badge-rojo">Sin web</span>
+        <span class="badge badge-rosa">Belleza</span>
+        <span class="badge badge-verde">Score 8.2</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ESTRATEGIA DE CONTACTO -->
+  <div class="section-title">Estrategia de Contacto Recomendada</div>
+  <div style="background:white;border-radius:12px;padding:24px;margin-bottom:40px;box-shadow:0 1px 4px rgba(0,0,0,0.07);">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
+      <div style="padding:16px;background:#f0fdf4;border-radius:8px;border-left:4px solid #22c55e;">
+        <div style="font-weight:700;margin-bottom:6px;">1. Instagram DM</div>
+        <div style="font-size:13px;color:#475569;">Para los que solo tienen Instagram. Mensaje corto, directo, mostrando que conocés su negocio. No vendas en el primer mensaje.</div>
+      </div>
+      <div style="padding:16px;background:#eff6ff;border-radius:8px;border-left:4px solid #3b82f6;">
+        <div style="font-weight:700;margin-bottom:6px;">2. WhatsApp</div>
+        <div style="font-size:13px;color:#475569;">Para los que tienen teléfono listado. Presentate brevemente, enviá una pregunta abierta. Máximo 3 líneas.</div>
+      </div>
+      <div style="padding:16px;background:#fefce8;border-radius:8px;border-left:4px solid #eab308;">
+        <div style="font-weight:700;margin-bottom:6px;">3. Visita presencial</div>
+        <div style="font-size:13px;color:#475569;">Para negocios de barrio (peluquerías, veterinarias). Ir en horario tranquilo, mostrá 2 ejemplos rápidos en el teléfono.</div>
+      </div>
+      <div style="padding:16px;background:#fdf4ff;border-radius:8px;border-left:4px solid #a855f7;">
+        <div style="font-weight:700;margin-bottom:6px;">4. Propuesta Express</div>
+        <div style="font-size:13px;color:#475569;">Ofrecé una "demo gratis" — una página sencilla que mostrás en 15 min. El 70% convierte cuando ven algo concreto.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON EXPORT -->
+  <div class="section-title">Exportar Datos (JSON para CRM)</div>
+  <div class="json-box">
+    <button class="copy-btn" onclick="copyJson()">Copiar</button>
+    <pre id="jsonContent">[
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">1</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Non Solo Pilates"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Fitness - Pilates Reformer"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Parque Patricios"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"contacto"</span>: <span class="json-str">"@nonsolopilates (Instagram)"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Solo Instagram"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">9.3</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">2</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Mambo Restoran"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Gastronomia - Cocina Argentina Contemporanea"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Villa Crespo"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"direccion"</span>: <span class="json-str">"Malabia 820, Villa Crespo"</span>,
+    <span class="json-key">"telefono"</span>: <span class="json-str">"+54 11 3068-1820"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Sin web propia"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">9.0</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">3</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Cucha del Pari"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Gastronomia - Bar / Resto"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"contacto"</span>: <span class="json-str">"@cuchadelpari (Instagram)"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Solo Instagram"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">9.0</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">4</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Barre Estudio"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Fitness - Ballet + Fitness + Pilates"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"contacto"</span>: <span class="json-str">"@barre.estudio (Instagram) - 3398 seguidores"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Solo Instagram"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">8.5</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">5</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Calma Chica"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Gastronomia - Cafe / Resto"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Almagro"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"direccion"</span>: <span class="json-str">"Tucuman y Bulnes, Almagro"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Sin web propia"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">8.3</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">6</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"AURORA ESTILISTAS"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Belleza - Peluqueria y Estetica"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Belgrano R"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"direccion"</span>: <span class="json-str">"Amenábar 1807, Belgrano R"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Sin web propia"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">8.2</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"MUY ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">7</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Olla 7"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Gastronomia - Resto"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Chacarita"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"direccion"</span>: <span class="json-str">"Charlone y Zabala, Chacarita"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Sin web propia"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">8.0</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  },
+  {
+    <span class="json-key">"id"</span>: <span class="json-num">8</span>,
+    <span class="json-key">"nombre"</span>: <span class="json-str">"Veterinaria S&B"</span>,
+    <span class="json-key">"sector"</span>: <span class="json-str">"Mascotas - Clinica Veterinaria"</span>,
+    <span class="json-key">"barrio"</span>: <span class="json-str">"Palermo"</span>,
+    <span class="json-key">"ciudad"</span>: <span class="json-str">"CABA"</span>,
+    <span class="json-key">"direccion"</span>: <span class="json-str">"Av. Raul Scalabrini Ortiz 1886, Palermo"</span>,
+    <span class="json-key">"telefono"</span>: <span class="json-str">"(011) 2875-25xx"</span>,
+    <span class="json-key">"presencia_web"</span>: <span class="json-str">"Sin web propia"</span>,
+    <span class="json-key">"score"</span>: <span class="json-num">7.5</span>,
+    <span class="json-key">"oportunidad"</span>: <span class="json-str">"ALTA"</span>,
+    <span class="json-key">"estado"</span>: <span class="json-str">"Sin contactar"</span>
+  }
+]</pre>
+  </div>
+
+</div>
+
+<div class="footer">
+  Generado con <strong>Claude Code</strong> · Kit de Prospección Digital · CABA · Mayo 2026
+</div>
+
+<script>
+  function copyJson() {
+    const pre = document.getElementById('jsonContent');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '¡Copiado!';
+      btn.style.color = '#22c55e';
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.style.color = ''; }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
